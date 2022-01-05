@@ -25,27 +25,34 @@ const showImages = (images) => {
     div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
     gallery.appendChild(div)
   })
-
+  loadingDisplay();
 }
 
 const getImages = (query) => {
   fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
     .then(response => response.json())
-    .then(data => showImages(data.hitS))
+    .then(data => {
+      console.log(data.hits);
+      showImages(data.hits)
+    })
     .catch(err => console.log(err))
 }
 
 let slideIndex = 0;
 const selectItem = (event, img) => {
   let element = event.target;
-  element.classList.add('added');
- 
+  element.classList.toggle('added');
   let item = sliders.indexOf(img);
   if (item === -1) {
     sliders.push(img);
-  } else {
-    alert('Hey, Already added !')
+
+  } 
+  else {
+    // delete sliders[sliders.indexOf(img)]
+    const remaining = sliders.filter(item => item !== img)
+    sliders = remaining;
   }
+  console.log(sliders)
 }
 var timer
 const createSlider = () => {
@@ -67,14 +74,14 @@ const createSlider = () => {
   document.querySelector('.main').style.display = 'block';
   // hide image aria
   imagesArea.style.display = 'none';
-  const duration = document.getElementById('duration').value || 1000;
+  const duration = document.getElementById('duration').value >=1000 || 1000;
   sliders.forEach(slide => {
     let item = document.createElement('div')
     item.className = "slider-item";
     item.innerHTML = `<img class="w-100"
     src="${slide}"
     alt="">`;
-    sliderContainer.appendChild(item)
+    sliderContainer.appendChild(item);
   })
   changeSlide(0)
   timer = setInterval(function () {
@@ -110,6 +117,7 @@ const changeSlide = (index) => {
 }
 
 searchBtn.addEventListener('click', function () {
+  loadingDisplay();
   document.querySelector('.main').style.display = 'none';
   clearInterval(timer);
   const search = document.getElementById('search');
@@ -120,3 +128,26 @@ searchBtn.addEventListener('click', function () {
 sliderBtn.addEventListener('click', function () {
   createSlider()
 })
+
+function keyupInput(e){
+  if(e.keyCode === 13){
+    searchBtn.click();
+  }
+}
+
+function loadingDisplay(){
+  document.getElementById('loadingDisplay').classList.toggle('d-none')
+}
+
+function themeChange(){
+  document.getElementById('themeChange').classList.toggle('themeChange')
+  const getTheme = document.getElementById('themeChangeBtn');
+  getTheme.classList.toggle('btn-dark')
+  getTheme.classList.toggle('btn-light')
+  if(getTheme.innerHTML == 'Light'){
+    getTheme.innerHTML= 'Dark';
+  }
+  else{
+    getTheme.innerHTML= 'Light';
+  }
+}
