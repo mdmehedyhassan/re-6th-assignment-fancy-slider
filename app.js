@@ -28,11 +28,23 @@ const showImages = (images) => {
   loadingDisplay();
 }
 
+const autoCall = () => {
+  fetch(`https://pixabay.com/api/?key=${KEY}=&image_type=photo&pretty=true`)
+    .then(response => response.json())
+    .then(data => {
+      console.log(data.hits);
+      showImages(data.hits)
+    })
+    .catch(err => console.log(err))
+}
+autoCall();
+
 const getImages = (query) => {
   fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
     .then(response => response.json())
     .then(data => {
       console.log(data.hits);
+      document.getElementById('loadingDisplay').style.display = 'none';
       showImages(data.hits)
     })
     .catch(err => console.log(err))
@@ -46,7 +58,7 @@ const selectItem = (event, img) => {
   if (item === -1) {
     sliders.push(img);
 
-  } 
+  }
   else {
     // delete sliders[sliders.indexOf(img)]
     const remaining = sliders.filter(item => item !== img)
@@ -75,22 +87,22 @@ const createSlider = () => {
   // hide image aria
   imagesArea.style.display = 'none';
   let duration = document.getElementById('duration').value * 1000;
-  if(duration < 1000){
+  if (duration < 1000) {
     duration = 1000;
   }
-    sliders.forEach(slide => {
-      let item = document.createElement('div')
-      item.className = "slider-item";
-      item.innerHTML = `<img class="w-100"
+  sliders.forEach(slide => {
+    let item = document.createElement('div')
+    item.className = "slider-item";
+    item.innerHTML = `<img class="w-100"
       src="${slide}"
       alt="">`;
-      sliderContainer.appendChild(item);
-    })
-    changeSlide(0)
-    timer = setInterval(function () {
-      slideIndex++;
-      changeSlide(slideIndex);
-    }, duration);
+    sliderContainer.appendChild(item);
+  })
+  changeSlide(0)
+  timer = setInterval(function () {
+    slideIndex++;
+    changeSlide(slideIndex);
+  }, duration);
 }
 
 // change slider index 
@@ -132,25 +144,25 @@ sliderBtn.addEventListener('click', function () {
   createSlider()
 })
 
-function keyupInput(e){
-  if(e.keyCode === 13){
+function keyupInput(e) {
+  if (e.keyCode === 13) {
     searchBtn.click();
   }
 }
 
-function loadingDisplay(){
-  document.getElementById('loadingDisplay').classList.toggle('d-none')
+function loadingDisplay() {
+  document.getElementById('loadingDisplay').classList.add('d-none')
 }
 
-function themeChange(){
+function themeChange() {
   document.getElementById('themeChange').classList.toggle('themeChange')
   const getTheme = document.getElementById('themeChangeBtn');
   getTheme.classList.toggle('btn-dark')
   getTheme.classList.toggle('btn-light')
-  if(getTheme.innerHTML == 'Light'){
-    getTheme.innerHTML= 'Dark';
+  if (getTheme.innerHTML == 'Light') {
+    getTheme.innerHTML = 'Dark';
   }
-  else{
-    getTheme.innerHTML= 'Light';
+  else {
+    getTheme.innerHTML = 'Light';
   }
 }
